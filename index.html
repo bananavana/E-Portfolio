@@ -228,6 +228,7 @@
       <button type="button" id="sound-btn" class="btn sound" aria-pressed="false" hidden>Sound off</button>
     </nav>
     <audio id="bgm" src="music.mp3" loop preload="metadata"></audio>
+    <audio id="boss" src="boss.mp3" loop preload="none"></audio>
   </div>
 </header>
 
@@ -582,6 +583,16 @@
     sendBtn.disabled = true;
     chips.style.display = 'none';
     addMsg('user', q);
+
+    if (/^boss\s*fight[\s!.]*$/i.test(q)) {
+      var bossReply = await toggleBoss();
+      addMsg('bot', bossReply);
+      busy = false;
+      sendBtn.disabled = false;
+      input.focus();
+      return;
+    }
+
     history.push({ role: 'user', content: q });
 
     var reply = '';
@@ -638,25 +649,55 @@
 
   /* ---------- Background music: off by default, starts only on click ---------- */
   var bgm = document.getElementById('bgm');
+  var bossAudio = document.getElementById('boss');
   var soundBtn = document.getElementById('sound-btn');
-  if (bgm && soundBtn) {
-    bgm.volume = 0.4;
-    var showSound = function () { soundBtn.hidden = false; };
-    var paintSound = function (on) {
+  var currentTrack = bgm;
+  var musicOn = false;
+
+  function showSound() { if (soundBtn) { soundBtn.hidden = false; } }
+  function paintSound(on) {
+    musicOn = on;
+    if (soundBtn) {
       soundBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
       soundBtn.textContent = on ? 'Sound on' : 'Sound off';
-    };
+    }
+  }
+  if (bgm) {
+    bgm.volume = 0.4;
     // The button appears only if music.mp3 actually loads next to this page
     bgm.addEventListener('loadedmetadata', showSound);
     if (bgm.readyState >= 1) { showSound(); }
+  }
+  if (bossAudio) { bossAudio.volume = 0.5; }
+  if (soundBtn) {
     soundBtn.addEventListener('click', async function () {
-      if (bgm.paused) {
-        try { await bgm.play(); paintSound(true); } catch (err) { paintSound(false); }
+      if (currentTrack.paused) {
+        try { await currentTrack.play(); paintSound(true); } catch (err) { paintSound(false); }
       } else {
-        bgm.pause();
+        currentTrack.pause();
         paintSound(false);
       }
     });
+  }
+
+  /* Typing "BOSS FIGHT" in the chat swaps the music; typing it again swaps back */
+  async function toggleBoss() {
+    if (!bossAudio || !bgm) { return 'no boss track here.'; }
+    var toBoss = currentTrack !== bossAudio;
+    var next = toBoss ? bossAudio : bgm;
+    var prev = currentTrack;
+    try {
+      prev.pause();
+      next.currentTime = 0;
+      await next.play();
+    } catch (err) {
+      try { if (musicOn) { await prev.play(); } } catch (e2) { /* ignore */ }
+      return toBoss ? 'huh. i can\'t find the boss track. is boss.mp3 uploaded next to index.html?' : 'couldn\'t switch the music back.';
+    }
+    currentTrack = next;
+    showSound();
+    paintSound(true);
+    return toBoss ? 'boss fight mode on. good luck, kiddo. type it again to switch back.' : 'back to the normal music. phew.';
   }
 
   /* Live AI replies light up only where the viewer's Claude account is available */
@@ -675,3 +716,4 @@
 </script>
 </body>
 </html>
+
