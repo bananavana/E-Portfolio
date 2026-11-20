@@ -1,0 +1,53 @@
+/* Sans chat upgrade. Uses the portfolio's existing #chat and theme variables. */
+#chat { --sans-blue: #4aceff; }
+#chat .chat-head { align-items: center; gap: 9px; padding: 10px; }
+#chat .sans-identity { display:flex; align-items:center; gap:10px; min-width:0; flex:1; }
+#chat .sans-identity-text { min-width:0; }
+#chat .sans-identity h2 { margin:0; font-family:var(--display, monospace); font-size:.88rem; }
+#chat .sans-status { margin:3px 0 0; font-size:.68rem; color:var(--muted); line-height:1.2; }
+#chat .sans-tools { display:flex; align-items:center; gap:4px; flex:none; }
+#chat .sans-tools button, #chat #chat-close {
+  display:grid; place-items:center; width:auto; min-width:29px; height:29px;
+  padding:0 5px; font-family:var(--display, monospace); font-size:.57rem;
+  border:1px solid var(--line); background:var(--bg); color:var(--fg); cursor:pointer;
+}
+#chat .sans-tools button:hover { background:var(--fg); color:var(--bg); }
+#chat .sans-tools button:disabled { opacity:.38; cursor:default; }
+#chat .sans-portrait { width:66px; height:66px; flex:none; background:#090d18; border:2px solid #f3f3f3; image-rendering:pixelated; overflow:hidden; }
+#chat .sans-portrait svg { width:100%; height:100%; display:block; }
+#chat .sans-portrait .sans-skull { fill:#faf9ed; }
+#chat .sans-portrait .sans-outline { fill:#171822; }
+#chat .sans-portrait .sans-hood { fill:#446a92; }
+#chat .sans-portrait .sans-eye { fill:#171822; }
+#chat .sans-portrait .sans-eye-glow { fill:#faf9ed; opacity:0; }
+#chat .sans-portrait .sans-teeth { stroke:#171822; stroke-width:2; }
+#chat .sans-portrait[data-mood="happy"] .sans-eye-right { transform:scaleY(.45); transform-origin:70px 40px; }
+#chat .sans-portrait[data-mood="thinking"] .sans-eye-left { transform:scaleY(.52); transform-origin:38px 40px; }
+#chat .sans-portrait[data-mood="surprised"] .sans-eye { transform:scale(.9, 1.3); transform-origin:center; }
+#chat .sans-portrait[data-mood="serious"] .sans-eye-right { fill:var(--sans-blue); filter:drop-shadow(0 0 4px #42ccff); }
+#chat .sans-portrait[data-mood="serious"] .sans-eye-glow { opacity:1; }
+#chat .sans-portrait[data-mood="sleepy"] .sans-eye { transform:scaleY(.20); transform-origin:center; }
+#chat .sans-portrait[data-mood="sad"] .sans-teeth { opacity:.4; }
+#chat .sans-portrait.is-talking { animation:sans-idle .38s steps(2) infinite; }
+@keyframes sans-idle { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-2px); } }
+#chat .msg.bot { max-width:94%; position:relative; }
+#chat .msg.bot .sans-speaker { font:700 .63rem var(--display, monospace); color:var(--muted); display:block; margin-bottom:5px; }
+#chat .msg.bot .sans-text { white-space:pre-wrap; overflow-wrap:anywhere; }
+#chat .msg.user { max-width:85%; }
+#chat .sans-cursor { display:inline-block; width:.42em; height:.85em; margin-left:3px; background:currentColor; vertical-align:-.11em; animation:sans-blink .8s steps(1) infinite; }
+@keyframes sans-blink { 50%{opacity:0;} }
+#chat .sans-mode-note { text-align:center; font-size:.7rem; color:var(--muted); padding:4px 12px; border-top:1px solid var(--soft); }
+#chat .sans-chip-button { font-family:var(--display, monospace); }
+@media(max-width:430px) {
+  #chat .sans-portrait { width:53px; height:53px; }
+  #chat .chat-head { gap:5px; padding:7px; }
+  #chat .sans-identity { gap:6px; }
+  #chat .sans-identity h2 { font-size:.77rem; }
+  #chat .sans-status { font-size:.62rem; }
+  #chat .sans-tools { gap:2px; }
+  #chat .sans-tools button,#chat #chat-close { min-width:25px; padding:0 3px; font-size:.52rem; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #chat .sans-portrait.is-talking,#chat .sans-cursor { animation:none !important; }
+}
+#chat-chips[hidden] { display:none !important; }
